@@ -13,7 +13,9 @@ export default class Controller extends React.Component {
   }
 
   static createCardSet(name) {
-    return CardSet.create(name);
+    let set = CardSet.create(name);
+    alert(set);
+    return set;
   }
 
   static getAllSets() {

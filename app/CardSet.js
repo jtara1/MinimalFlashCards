@@ -29,15 +29,16 @@ export default class CardSet {
     // get the number of sets created
     // eg: "1,4,5,6,10,402"
     try {
-      AsyncStorage.getItem('CardSet.ids').then((setIndices) => {
+      AsyncStorage.getItem('CardSet.ids', (setIndices) => {
+        alert(setIndices);
         if (setIndices === null) {
-          CardSet.ids = [];
+          CardSet._ids = [];
         } else {
-          CardSet.ids = CardSet.parseIds(setIndices);
+          CardSet._ids = CardSet.parseIds(setIndices);
         }
       });
     } catch (error) {
-      alert(error);
+      // alert(error);
     }
 
     return CardSet.ids;
@@ -48,10 +49,12 @@ export default class CardSet {
     let id;
     // first set we're adding
     if (CardSet.ids.length === 0) {
+      alert('id is 0');
       id = 0;
     } else {
       // next id is the largest incremented by 1
       id = CardSet.ids[CardSet.ids.length - 1] + 1;
+      alert(JSON.parse(CardSet.ids));
     }
 
     AsyncStorage.setItem(`CardSet.this${id}.name`, name);
@@ -70,8 +73,9 @@ export default class CardSet {
    * @private
    */
   static _addIdAndSaveCardSetIds(newIndex) {
-    CardSet.ids.push(newIndex);
+    CardSet._ids.push(newIndex);
     let str = CardSet.ids.join(',');
+    // alert(`saving ${str}`);
     AsyncStorage.setItem('CardSet.ids', str);
   }
 
