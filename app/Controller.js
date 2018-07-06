@@ -7,38 +7,57 @@ import {
 import CardSet from './CardSet';
 import Card from "./Card";
 
-export default class Controller extends React.Component {
+export default class Controller {
   constructor(props) {
-    super(props);
+    // super(props);
   }
 
-  static createCardSet(name) {
-    let set = CardSet.create(name);
-    alert(set);
-    return set;
-  }
+  // static createCardSet(name) {
+  //   let set = CardSet.create(name);
+  //   alert(set);
+  //   return set;
+  // }
 
-  static getAllSets() {
+  static async getAllSets() {
     let cardSets = [];
-    for (id of CardSet.getIds()) {
-      cardSets.push({
-        id,
-        name
-      });
+    for (id of CardSet.setIds) {
+      alert(id);
+      try {
+        let set = await CardSet.get(id);
+        cardSets.push(set);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     return cardSets;
   }
 
   static async getAllCardsForASet(setId) {
-    let storageKey = `CardSet.this${setId}.cardIds`;
-    let cardIds = CardSet.parseIds(await AsyncStorage(storageKey));
+    var cardIds;
+
+    try {
+      cardIds = await CardSet.getCardIds(setId);
+      alert(`got ${JSON.stringify(cardIds)}`);
+    } catch (err) {
+      console.error(err);
+    }
     let cards = [];
 
     for (id of cardIds) {
-      cards.push(Card.get(id));
+      alert(`iter card id, ${id}`);
+      Card.get(id)
+        .then(card => {
+          cards.push(card);
+        })
+        .catch(err => console.error(err))
     }
 
     return cards;
+  }
+
+  static async createCard(setId, name, description) {
+    // let set = CardSet.get(set);
+    return CardSet.createCard(setId, name, description);
   }
 }

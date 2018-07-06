@@ -5,122 +5,111 @@ import {
 } from 'react-native';
 
 import Card from './Card';
+import CommonCard from './CommonCard';
 
-export default class CardSet {
-  static _ids;
-  static get ids() {
-    if (!CardSet._ids) {
-      CardSet._defineCardSetIds();
-    }
+export default class CardSet extends CommonCard {
+  static setIds;
 
-    return this._ids;
-  };
-
-  static parseIds = (idsStr) => {
-    let indices = idsStr.split(',');
-    return Number.apply(null, indices);
-  };
-
-  /**
-   *
-   * @private
-   */
-  static _defineCardSetIds() {
+  static getCardSetIds() {
+    var ids = [];
     // get the number of sets created
     // eg: "1,4,5,6,10,402"
     try {
-      AsyncStorage.getItem('CardSet.ids', (setIndices) => {
-        alert(setIndices);
-        if (setIndices === null) {
-          CardSet._ids = [];
-        } else {
-          CardSet._ids = CardSet.parseIds(setIndices);
+      AsyncStorage.getItem('CardSet.ids', (setIds) => {
+        if (setIds !== null) {
+          ids = CardSet.parseIds(setIds);
         }
       });
     } catch (error) {
-      // alert(error);
+      alert(error);
     }
 
-    return CardSet.ids;
+    return ids;
   }
 
-
-  static create(name) {
-    let id;
-    // first set we're adding
-    if (CardSet.ids.length === 0) {
-      alert('id is 0');
-      id = 0;
-    } else {
-      // next id is the largest incremented by 1
-      id = CardSet.ids[CardSet.ids.length - 1] + 1;
-      alert(JSON.parse(CardSet.ids));
-    }
-
-    AsyncStorage.setItem(`CardSet.this${id}.name`, name);
-    CardSet._addIdAndSaveCardSetIds(id);
-
+  static async get(setId) {
+    let name = await AsyncStorage.getItem(`CardSet.this${setId}.name`);
     return {
-      id,
+      id: setId,
       name,
     }
   }
 
   /**
-   * Helper function for creating a new card set. Adds to the static attr and
-   * saves all the ids
-   * @param newIndex
-   * @private
+   * Get all the card ids of a given set.
+   * @param setId
+   * @returns {Promise<*>}
    */
-  static _addIdAndSaveCardSetIds(newIndex) {
-    CardSet._ids.push(newIndex);
-    let str = CardSet.ids.join(',');
-    // alert(`saving ${str}`);
+  static async getCardIds(setId) {
+    let ids = await AsyncStorage.getItem(`CardSet.this${setId}.cardIds`);
+
+    // there were no card yet added to this set
+    if (ids == null) {
+      return [];
+    }
+    return CardSet.parseIds(ids);
+  }
+
+  constructor(name) {
+    super();
+    // ids of all sets
+    this.name = name;
+    this.cardIds = [];
+
+    this._createSetId();
+    AsyncStorage.setItem(`CardSet.this${this.id}.name`, name);
+  }
+
+  _createSetId() {
+    var id;
+    // first set we're adding
+    if (CardSet.setIds.length === 0) {
+      id = 0;
+    } else {
+      // next id is the largest incremented by 1
+      id = CardSet.setIds[CardSet.setIds.length - 1] + 1;
+    }
+    this.id = id;
+
+    this._addIdAndSaveCardSetIds(id);
+  }
+
+  _addIdAndSaveCardSetIds(id) {
+    CardSet.setIds.push(id);
+    let str = CardSet.setIds.join(',');
+    // alert(str);
     AsyncStorage.setItem('CardSet.ids', str);
   }
 
   /**
-   * Add a card id to the array of card ids for a given card set
+   * Creates a new card for a given set, and save the
+   * id of the card in the card ids for this set.
    * @param setId
-   * @param cardId
-   * @returns {Promise<void>}
+   * @param name
+   * @param description
    */
-  static async addCard(setId, cardId) {
-    let storageKey = `CardSet.this${setId}.cardIds`;
-
-    // get the array of card ids for this set
-    let cardIdsStr = await AsyncStorage.getItem(storageKey);
-    let cardIds = CardSet.parseIds(cardIdsStr);
-
-    // add the new card id to this array
-    cardIds.push(cardId);
-
-    // save it
-    cardIdsStr = cardIds.join(',');
-    AsyncStorage.setItem(storageKey, cardIdsStr);
-  }
-
-    static getAllSets() {
-    let cardSets = [];
-    for (id of CardSet.ids) {
-      cardSets.push({
-        id,
-        name
-      });
+  static async createCard(setId, name, description) {
+    let card = new Card(name, description);
+    var cardIds;
+    try {
+      cardIds = await CardSet.getCardIds(setId);
+    } catch (err) {
+      console.log(err);
     }
 
-    return cardSets;
-  }
+    if (cardIds != null) {
+      cardIds.push(card.id);
 
-  static async getAllCardsForASet(setId) {
-    let storageKey = `CardSet.this${setId}.cardIds`;
-    let cardIds = CardSet.parseIds(await AsyncStorage(storageKey));
-    let cards = [];
-
-    for (id of cardIds) {
-      cards.push(Card.get(id));
+      let str = cardIds.join(',');
+      AsyncStorage.setItem(`CardSet.this${setId}.cardIds`, str);
+    } else {
+      alert('not gucci');
     }
 
-    return cards;
+    return card;
   }
 }
+
+(function defineSetIds() {
+  CardSet.setIds = CardSet.getCardSetIds();
+})();

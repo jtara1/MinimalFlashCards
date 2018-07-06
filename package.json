@@ -5,11 +5,15 @@
   "scripts": {
     "start": "adb reverse tcp:8081 8081 && react-native run-android",
     "start2": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android",
+    "rtcp": "adb reverse tcp:8081 tcp:8081"
   },
   "dependencies": {
     "react": "16.3.1",
-    "react-native": "0.55.4"
+    "react-native": "0.55.4",
+    "react-native-swipe-gestures": "^1.0.2",
+    "react-navigation": "^2.6.0"
   },
   "devDependencies": {
     "babel-jest": "23.2.0",
