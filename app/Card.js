@@ -17,9 +17,12 @@ export default class Card extends CommonCard {
     try {
       AsyncStorage.getItem('Card.ids', (cardIds) => {
         // alert('setIds ', setIds);
-        if (cardIds != null) {
+        if (cardIds !== null) {
           ids = Card.parseIds(cardIds);
+        } else {
+          // alert('Card.cardIds hasn\'t been defined');
         }
+        Card.cardIds = ids;
       });
     } catch (error) {
       alert(error);
@@ -34,36 +37,41 @@ export default class Card extends CommonCard {
     this.description = description;
 
     this.id = null;
-    this._createCardId();
 
-    if (this.id == null) {
-      console.error('id attr undef in Card obj');
-    } else {
-      AsyncStorage.setItem(`Card.this${this.id}.name`, name);
-      AsyncStorage.setItem(`Card.this${this.id}.description`, description);
-    }
+    this._createCardId()
+      .then(() => {
+        if (this.id == null) {
+          console.error('id attr undef in Card obj');
+        } else {
+          AsyncStorage.setItem(`Card.this${this.id}.name`, name);
+          AsyncStorage.setItem(`Card.this${this.id}.description`, description);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      })
   }
 
-  _createCardId() {
+  async _createCardId() {
     this.id = null;
-    // first set we're adding
-    if (Card.cardIds.length === 0) {
-      this.id = 0;
-    } else {
-      // alert(JSON.parse(CardSet.setIds));
-      this.id = Card.cardIds[Card.cardIds.length - 1] + 1;
-    }
-    // alert(`id ${id}`);
-    // this.id = id;
 
-    // this._addIdAndSaveCardIds(id);
+    if (Card.cardIds != null) {
+      // first card we're adding
+      if (Card.cardIds.length === 0) {
+        alert(`Card.cardIds length is 0, ${JSON.stringify(Card.cardIds)}`);
+        this.id = 0;
+      } else {
+        this.id = Card.cardIds[Card.cardIds.length - 1] + 1;
+      }
+    } else {
+      console.error('Card.cardIds is undef')
+    }
     this._addIdAndSaveCardIds(this.id);
   }
 
   _addIdAndSaveCardIds(id) {
     Card.cardIds.push(id);
     let str = Card.cardIds.join(',');
-    // alert(str);
     AsyncStorage.setItem('Card.ids', str);
   }
 
@@ -73,7 +81,6 @@ export default class Card extends CommonCard {
 
     if (name == null && description == null) {
       let msg = 'invalid card id given or name & description were never defined';
-      // throw new Exception(msg);
       alert(msg)
     }
 
@@ -86,5 +93,5 @@ export default class Card extends CommonCard {
 }
 
 (function defineSetIds() {
-    Card.cardIds = Card.defineCardIds();
-  })();
+  Card.defineCardIds();
+})();

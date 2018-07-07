@@ -110,7 +110,7 @@ export default class CardsView extends React.Component {
         onChangeText={
           text => {
             if (!text) text = 'default-name';
-            this.setState({cardText: text})
+            this.setState({cardName: text})
           }}
       />;
 
