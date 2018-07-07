@@ -21,7 +21,7 @@ export default class CardSetsView extends Component {
     this.state = {
       cardSets: [],
     };
-    AsyncStorage.clear();
+    // AsyncStorage.clear();
   }
 
   componentDidMount() {

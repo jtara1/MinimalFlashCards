@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import Controller from './Controller';
+import HorizontalRule from './HorizontalRule';
 
 export default class CardsView extends React.Component {
   constructor(props) {
@@ -30,8 +31,8 @@ export default class CardsView extends React.Component {
     this.updateCards();
     // debug
     this.createCard('run', 'to walk quickly');
-    this.createCard('prefix operator', 'an op that comes before the operand');
-    this.createCard('postfix operator', 'an op that comes after the operand');
+    // this.createCard('prefix operator', 'an op that comes before the operand');
+    // this.createCard('postfix operator', 'an op that comes after the operand');
   }
 
   updateCards() {
@@ -92,7 +93,7 @@ export default class CardsView extends React.Component {
     // let name = card.name;
     // card.name = card.description;
     // card.description = name;
-    // this.setState({cardName: 'default-name'});
+    // this.setState({cardText: 'default-name'});
     this.setState(prevState => {
       return {
         showName: !prevState.showName,
@@ -109,7 +110,7 @@ export default class CardsView extends React.Component {
         onChangeText={
           text => {
             if (!text) text = 'default-name';
-            this.setState({cardName: text})
+            this.setState({cardText: text})
           }}
       />;
 
@@ -132,7 +133,7 @@ export default class CardsView extends React.Component {
     };
 
     return(
-      <View>
+      <View style={{flex: 1}}>
         <Modal
           animationType="slide"
           transparent={false}
@@ -168,10 +169,12 @@ export default class CardsView extends React.Component {
 
         <Button
           title={'flip'}
+          style={styles.button}
           onPress={this.flipCurrentCard}
           />
         <Button
           title={'new'}
+          style={styles.button}
           onPress={
             () => {
               this.setState({modalVisible: true})
@@ -182,25 +185,43 @@ export default class CardsView extends React.Component {
 
         {
           this.state.cards.length === 0 ?
-            <Text style={styles.cardName}>no cards added yet</Text> :
-            <Text style={styles.cardName}>
-              {
-                this.state.showName ?
-                this.state.cards[this.state.cardsIndex].name :
-                this.state.cards[this.state.cardsIndex].description
-              }
-            </Text>
+            <Text style={styles.cardText}>no cards added yet</Text> :
+            <View style={styles.textContainer}>
+              <Text
+                style={styles.cardHeader}
+              >
+                {this.state.showName ? 'Name' : 'Description'}
+              </Text>
+              <HorizontalRule/>
+              <Text style={
+                [
+                  styles.cardText,
+                  {
+                    fontSize: this.state.showName ? 56 : 30,
+                  },
+                ]}
+              >
+                {
+                  this.state.showName ?
+                  this.state.cards[this.state.cardsIndex].name :
+                  this.state.cards[this.state.cardsIndex].description
+                }
+              </Text>
+            </View>
         }
 
         <Button
+          style={styles.button}
           title={'next'}
           onPress={this.nextIndex}
           />
         <Button
+          style={styles.button}
           title={'prev'}
           onPress={this.previousIndex}
           />
         <Button
+          style={styles.button}
           title={'modal'}
           onPress={() => this.setState({modalVisible: true})}
           />
@@ -210,13 +231,29 @@ export default class CardsView extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  cardName: {
+  textContainer: {
+    flex: 4,
+  },
+
+  cardHeader: {
     alignSelf: 'center',
-    fontSize: 36
+    textAlignVertical: 'top',
+    fontSize: 22,
+  },
+
+  cardText: {
+    alignSelf: 'center',
+    fontSize: 36,
+    flex: 1,
+    textAlignVertical: 'top',
   },
 
   cardDescription: {
     alignContent: 'center',
     fontSize: 22,
+  },
+
+  button: {
+    flex: 3,
   }
 });

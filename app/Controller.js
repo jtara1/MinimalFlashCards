@@ -38,14 +38,14 @@ export default class Controller {
 
     try {
       cardIds = await CardSet.getCardIds(setId);
-      alert(`got ${JSON.stringify(cardIds)}`);
+      // alert(`got ${JSON.stringify(cardIds)}`);
     } catch (err) {
       console.error(err);
     }
     let cards = [];
 
     for (id of cardIds) {
-      alert(`iter card id, ${id}`);
+      // alert(`iter card id, ${id}`);
       Card.get(id)
         .then(card => {
           cards.push(card);
