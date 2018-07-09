@@ -8,20 +8,20 @@ import CardSet from './CardSet';
 import Card from "./Card";
 
 export default class Controller {
-  constructor(props) {
-    // super(props);
-  }
-
-  // static createCardSet(name) {
-  //   let set = CardSet.create(name);
-  //   alert(set);
-  //   return set;
-  // }
 
   static async getAllSets() {
     let cardSets = [];
+
+    if (CardSet.setIds == null) {
+      try {
+        await CardSet.defineCardSetIds()
+      } catch (err) {
+        console.error(err);
+        return;
+      }
+    }
+
     for (id of CardSet.setIds) {
-      alert(id);
       try {
         let set = await CardSet.get(id);
         cardSets.push(set);
@@ -38,14 +38,12 @@ export default class Controller {
 
     try {
       cardIds = await CardSet.getCardIds(setId);
-      // alert(`got ${JSON.stringify(cardIds)}`);
     } catch (err) {
       console.error(err);
     }
     let cards = [];
 
     for (id of cardIds) {
-      // alert(`iter card id, ${id}`);
       Card.get(id)
         .then(card => {
           cards.push(card);
@@ -57,7 +55,6 @@ export default class Controller {
   }
 
   static async createCard(setId, name, description) {
-    // let set = CardSet.get(set);
     return CardSet.createCard(setId, name, description);
   }
 }

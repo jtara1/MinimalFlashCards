@@ -10,25 +10,29 @@ import CommonCard from './CommonCard';
 export default class CardSet extends CommonCard {
   static setIds;
 
-  static getCardSetIds() {
-    var ids = [];
+  static async defineCardSetIds() {
+    let ids = [];
     // get the number of sets created
     // eg: "1,4,5,6,10,402"
     try {
-      AsyncStorage.getItem('CardSet.ids', (setIds) => {
-        if (setIds !== null) {
-          ids = CardSet.parseIds(setIds);
-        }
-      });
+      let setIds = await AsyncStorage.getItem('CardSet.ids');
+      if (setIds != null) {
+        ids = CardSet.parseIds(setIds);
+      }
+      CardSet.setIds = ids;
     } catch (error) {
-      alert(error);
+      console.error(error);
     }
-
-    return ids;
   }
 
   static async get(setId) {
-    let name = await AsyncStorage.getItem(`CardSet.this${setId}.name`);
+    let name;
+    try {
+      name = await AsyncStorage.getItem(`CardSet.this${setId}.name`);
+    } catch (err) {
+      console.error(err);
+    }
+
     return {
       id: setId,
       name,
@@ -41,7 +45,12 @@ export default class CardSet extends CommonCard {
    * @returns {Promise<*>}
    */
   static async getCardIds(setId) {
-    let ids = await AsyncStorage.getItem(`CardSet.this${setId}.cardIds`);
+    let ids;
+    try {
+      ids = await AsyncStorage.getItem(`CardSet.this${setId}.cardIds`);
+    } catch (err) {
+      console.error(err);
+    }
 
     // there were no card yet added to this set
     if (ids == null) {
@@ -57,7 +66,11 @@ export default class CardSet extends CommonCard {
     this.cardIds = [];
 
     this._createSetId();
-    AsyncStorage.setItem(`CardSet.this${this.id}.name`, name);
+    try {
+      AsyncStorage.setItem(`CardSet.this${this.id}.name`, name);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   _createSetId() {
@@ -77,8 +90,12 @@ export default class CardSet extends CommonCard {
   _addIdAndSaveCardSetIds(id) {
     CardSet.setIds.push(id);
     let str = CardSet.setIds.join(',');
-    // alert(str);
-    AsyncStorage.setItem('CardSet.ids', str);
+
+    try {
+      AsyncStorage.setItem('CardSet.ids', str);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   /**
@@ -90,26 +107,35 @@ export default class CardSet extends CommonCard {
    */
   static async createCard(setId, name, description) {
     let card = new Card(name, description);
-    var cardIds;
+    let cardIds;
     try {
       cardIds = await CardSet.getCardIds(setId);
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
 
     if (cardIds != null) {
       cardIds.push(card.id);
 
       let str = cardIds.join(',');
-      AsyncStorage.setItem(`CardSet.this${setId}.cardIds`, str);
+
+      try {
+        AsyncStorage.setItem(`CardSet.this${setId}.cardIds`, str);
+      } catch (err) {
+        console.error(err);
+      }
     } else {
-      alert('not gucci');
+      console.error('cardIds is null');
     }
 
     return card;
   }
 }
 
-(function defineSetIds() {
-  CardSet.setIds = CardSet.getCardSetIds();
+(async function defineSetIds() {
+  try {
+    await CardSet.defineCardSetIds();
+  } catch (err) {
+    console.error(err);
+  }
 })();

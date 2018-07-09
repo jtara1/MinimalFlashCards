@@ -60,12 +60,7 @@ export default class CardsView extends React.Component {
 
   nextIndex = () => {
     this.setState(prevState => {
-      // alert(`length: ${prevState.cards.length}`);
-      // alert(`index ${prevState.cardsIndex}`);
-      // alert(`length ${prevState.cards.length}`)
-      // let index = prevState.cardIndex + 1 % prevState.cards.length;
       let index = (this.state.cardsIndex + 1) % this.state.cards.length;
-      // alert(`next index: ${index}`);
       return {
         cardsIndex: index,
         showName: true,
