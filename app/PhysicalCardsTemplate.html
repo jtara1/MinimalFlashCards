@@ -42,8 +42,8 @@ function run() {
     let columns = 3;
     // 21 characters per line
     let names = ['1234567890123456789012345', 'bbbbbbb', 'c', 'd'];
-    // let names = ['a' , 'b', 'c'];
     let descriptions = ['aa', 'bb', 'cc', 'dd'];
+    let descriptionsReversed = [];
 
     let remainder = names.length % columns;
 
@@ -53,17 +53,28 @@ function run() {
       descriptions.push('');
     }
 
+    // reverse ordering of sub sections of array
+  	for (let i = columns - 1; i < descriptions.length; i += columns) {
+      console.log(i);
+	  for (let index = i; index > i - columns; index--) {
+	    console.log(descriptions[index]);
+	    descriptionsReversed.push(descriptions[index]);
+	  }
+	}
 
     let namesIndex = 0;
     let descriptionsIndex = 0;
-
     let container = document.querySelector('#container');
 
-    for (let page = 0; namesIndex < names.length || descriptionsIndex < descriptions.length; page++) {
+    for (
+      let page = 0;
+      namesIndex < names.length || descriptionsIndex < descriptionsReversed.length;
+      page++) {
+
       let domPage = document.createElement('div');
       domPage.className = 'page';
       domPage.id = 'page' + page;
-      // domPage.setAttribute('style', 'margin-top: ' + 11 * page + 'in;');
+      
       container.appendChild(domPage);
 
       let isPageForNames = page % 2 === 0;
@@ -88,7 +99,7 @@ function run() {
 
             // text of the card
             // let lines = splitText(names[namesIndex++]);
-            let lines = [isPageForNames ? names[namesIndex++] : descriptions[descriptionsIndex++]];
+            let lines = [isPageForNames ? names[namesIndex++] : descriptionsReversed[descriptionsIndex++]];
             let domLines = [];
             for (let line of lines) {
               let text = document.createElement('p');
