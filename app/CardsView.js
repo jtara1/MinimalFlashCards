@@ -134,7 +134,7 @@ export default class CardsView extends React.Component {
           transparent={false}
           visible={this.state.modalVisible}
           onRequestClose={() => {
-            alert('Modal has been closed.');
+            this.setState({modalVisible: false});
           }}
         >
           <Text>Name</Text>
