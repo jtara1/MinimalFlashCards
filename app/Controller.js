@@ -34,7 +34,7 @@ export default class Controller {
   }
 
   static async getAllCardsForASet(setId) {
-    var cardIds;
+    let cardIds;
 
     try {
       cardIds = await CardSet.getCardIds(setId);
@@ -44,11 +44,12 @@ export default class Controller {
     let cards = [];
 
     for (id of cardIds) {
-      Card.get(id)
-        .then(card => {
-          cards.push(card);
-        })
-        .catch(err => console.error(err))
+      try {
+        let card = await Card.get(id);
+        cards.push(card);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     return cards;

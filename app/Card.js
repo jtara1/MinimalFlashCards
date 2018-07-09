@@ -101,7 +101,7 @@ export default class Card extends CommonCard {
   }
 }
 
-(async function defineSetIds() {
+(async function defineCardIds() {
   try {
     await Card.defineCardIds();
   } catch (err) {

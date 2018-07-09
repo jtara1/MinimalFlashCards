@@ -30,21 +30,21 @@ export default class CardsView extends React.Component {
   componentDidMount() {
     this.updateCards();
     // debug
-    this.createCard('run', 'to walk quickly');
+    // this.createCard('run', 'to walk quickly');
     // this.createCard('prefix operator', 'an op that comes before the operand');
     // this.createCard('postfix operator', 'an op that comes after the operand');
   }
 
-  updateCards() {
+  updateCards = () => {
     Controller.getAllCardsForASet(this.cardSetId)
       .then(cards => {
-        // alert(`updateCards ${JSON.stringify(cards)}`);
+        alert(`updateCards ${JSON.stringify(cards)}`);
         this.setState({
           cards
         });
       })
       .catch(err => console.error(err));
-  }
+  };
 
   createCard(name, description) {
     Controller.createCard(this.cardSetId, name, description)
@@ -84,11 +84,6 @@ export default class CardsView extends React.Component {
   };
 
   flipCurrentCard = () => {
-    // let card = this.state.cards[this.state.cardsIndex];
-    // let name = card.name;
-    // card.name = card.description;
-    // card.description = name;
-    // this.setState({cardText: 'default-name'});
     this.setState(prevState => {
       return {
         showName: !prevState.showName,

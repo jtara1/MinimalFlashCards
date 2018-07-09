@@ -22,11 +22,6 @@ export default class CardSetsView extends Component {
       cardSets: [],
     };
     // AsyncStorage.clear();
-    AsyncStorage.getAllKeys(keys => {
-      if (keys) {
-        keys.forEach(key => alert(key));
-      }
-    })
   }
 
   componentDidMount() {
@@ -59,7 +54,6 @@ export default class CardSetsView extends Component {
           style={styles.button}
           onPress={
             () => {
-              alert('pressed');
               this.createCardSet();
             }
           }
