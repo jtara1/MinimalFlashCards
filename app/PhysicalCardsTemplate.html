@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+* {
+	padding: 0;
+	margin: 0;
+}
+
+.header {
+	padding: 15px 0 30px 15px;
+}
+
+p {
+	margin: 0 30px 0 30px;
+	color: black;
+    word-break: break-all;
+}
+
+div.page {
+	width: 8.5in;
+	height: 11in;
+}
+
+.card {
+    position: absolute;
+    display: inline-block;
+    width: 2.75in;
+    height: 3in;
+    border: 1px solid black;        
+    background-color: white; 
+}
+</style>
+
+<script>
+
+window.onload = run;
+
+function run() {
+    let rows = 3;
+    let columns = 3;
+    // 21 characters per line
+    let names = ['1234567890123456789012345', 'bbbbbbb', 'c', 'd'];
+    // let names = ['a' , 'b', 'c'];
+    let descriptions = ['aa', 'bb', 'cc', 'dd'];
+
+    let remainder = names.length % columns;
+
+    // fill in extra blank cards to help with row reversals later
+    for (let i = 0; i <= remainder; i++) {
+      names.push('');
+      descriptions.push('');
+    }
+
+
+    let namesIndex = 0;
+    let descriptionsIndex = 0;
+
+    let container = document.querySelector('#container');
+
+    for (let page = 0; namesIndex < names.length || descriptionsIndex < descriptions.length; page++) {
+      let domPage = document.createElement('div');
+      domPage.className = 'page';
+      domPage.id = 'page' + page;
+      // domPage.setAttribute('style', 'margin-top: ' + 11 * page + 'in;');
+      container.appendChild(domPage);
+
+      let isPageForNames = page % 2 === 0;
+
+      for (let row = 0; row < rows; row++) {
+          let rowOfCards = [];
+
+          for (
+            let column = 0;
+            column < columns;
+            column++) {
+
+            // div for a single card
+            let card = document.createElement('div');
+            card.className = 'card';
+            card.setAttribute('style', 'margin-left: ' + 2.75 * column + 'in; margin-top: '  + 3 * row + 'in;');
+
+            // header
+            let header = document.createElement('p');
+            header.textContent = isPageForNames ? 'Name' : 'Description';
+            let hr = document.createElement('hr');
+
+            // text of the card
+            // let lines = splitText(names[namesIndex++]);
+            let lines = [isPageForNames ? names[namesIndex++] : descriptions[descriptionsIndex++]];
+            let domLines = [];
+            for (let line of lines) {
+              let text = document.createElement('p');
+              text.textContent = line;
+              domLines.push(text);
+            }
+            // let text = document.createElement('span');
+            // domLines.map(line => text.append(line));
+
+            card.appendChild(header);
+            card.appendChild(hr);
+            // card.appendChild(text);
+            domLines.map(line => card.append(line));
+            rowOfCards.push(card);
+          }
+
+          let pageDiv = document.querySelector('#page' + page);
+
+          if (isPageForNames) {
+            rowOfCards.map(card => pageDiv.appendChild(card));
+          } else {
+            for (let i = rowOfCards.length - 1; i >= 0; i--) {
+              pageDiv.appendChild(rowOfCards[i]);
+            }
+          }
+      } // end of cards per page
+    } // end of iterating over pages
+}
+
+function splitText(text) {
+  let charactersPerLine = 21;
+  let lines = [];
+  for (let i = 0; i < text.length; i += charactersPerLine) {
+    lines.push(text.slice(i, i + charactersPerLine));
+  }
+
+  return lines;
+}
+</script>
+</head>
+
+<body>
+<div id="container">
+	<!--<p class="header">front1</p>-->
+	<!--<div class="card" style="margin-left: 10px; margin-top: 100px;">-->
+		<!--<p>Name</p>-->
+		<!--<hr/>-->
+		<!--<p>${names[0]}</p>-->
+	<!--</div>-->
+	<!--<div class="card">-->
+		<!--<p>Name</p>-->
+		<!--<hr/>-->
+		<!--<p>${names[1]}</p>-->
+	<!--</div>-->
+	<!--<div class="card">-->
+		<!--<p>Name</p>-->
+		<!--<hr/>-->
+		<!--<p>${names[2]}</p>-->
+	<!--</div>-->
+
+	<!--<br/>-->
+	<!--<div class="card">-->
+		<!--<p>Name</p>-->
+		<!--<hr/>-->
+		<!--<p>${names[3]}</p>-->
+	<!--</div>-->
+</div>
+</body>
+</html>
+

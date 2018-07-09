@@ -12,6 +12,7 @@ import {StackNavigator} from 'react-navigation';
 import Controller from './Controller';
 import CardSet from './CardSet';
 import Card from './Card';
+import Example from './Test';
 
 export default class CardSetsView extends Component {
 
@@ -57,6 +58,7 @@ export default class CardSetsView extends Component {
     // alert(`${JSON.stringify(this.state.cardSets)}`);
     return(
       <View>
+        <Example/>
         <TouchableOpacity
           style={styles.button}
           onPress={
