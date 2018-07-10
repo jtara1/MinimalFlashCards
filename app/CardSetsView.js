@@ -50,19 +50,16 @@ export default class CardSetsView extends Component {
 
   render() {
     return(
-      <View
-        // style={{flex: 1}}
-      >
+      <View>
         {/*<Example/>*/}
         <TouchableOpacity
-          // style={styles.button}
           onPress={
             () => {
               this.createCardSet();
             }
           }
         >
-          <Text>New</Text>
+          <Text>New Card Set</Text>
         </TouchableOpacity>
         <List containerStyle={{marginBottom: 20}}>
           {

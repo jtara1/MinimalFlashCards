@@ -3,13 +3,17 @@ import {
   View,
   StyleSheet,
   Text,
-  Button,
+  // Button,
   Modal,
   TextInput
 } from 'react-native';
+import {
+  Button,
+} from 'react-native-elements';
 
 import Controller from './Controller';
 import HorizontalRule from './HorizontalRule';
+import NewCardView from "./NewCardView";
 
 export default class CardsView extends React.Component {
   constructor(props) {
@@ -92,71 +96,13 @@ export default class CardsView extends React.Component {
   };
 
   render() {
-    let nameInput =
-      <TextInput
-        style={{
-          flex: 1,
-        }}
-        onChangeText={
-          text => {
-            if (!text) text = 'default-name';
-            this.setState({cardName: text})
-          }}
+    let newCardView =
+      <NewCardView
+        onSubmit={this.createCard}
       />;
-
-    let descriptionInput =
-      <TextInput
-        multiline={true}
-        style={{
-          flex: 1,
-        }}
-        onChangeText={
-          text => {
-            if (text === '') text = 'default-description';
-            this.setState({cardDescription: text});
-          }}
-      />;
-
-    let clearText = () => {
-      nameInput.clear();
-      descriptionInput.clear();
-    };
 
     return(
       <View style={{flex: 1}}>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            this.setState({modalVisible: false});
-          }}
-        >
-          <Text>Name</Text>
-          {nameInput}
-
-          <Text>Description</Text>
-          {descriptionInput}
-
-          <Button
-            title={'save'}
-            onPress={
-              () => {
-                this.createCard(this.state.cardName, this.state.cardDescription)
-                this.setState({modalVisible: false});
-              }}
-          />
-          <Button
-            title={'close'}
-            onPress={
-              () => {
-                this.setState({
-                  modalVisible: false
-                })
-              }}
-          />
-        </Modal>
-
         <Button
           title={'flip'}
           style={styles.button}
@@ -167,7 +113,8 @@ export default class CardsView extends React.Component {
           style={styles.button}
           onPress={
             () => {
-              this.setState({modalVisible: true})
+              newCardView.toggleVisible();
+              // this.setState({modalVisible: true})
               // this.createCard();
             }
           }

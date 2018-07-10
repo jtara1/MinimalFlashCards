@@ -29,8 +29,8 @@ export default class Card extends CommonCard {
 
   constructor(name, description) {
     super();
-    this.name = name;
-    this.description = description;
+    this.name = name || 'undefined name';
+    this.description = description || 'undefined description';
 
     this.id = null;
 
