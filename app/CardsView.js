@@ -5,8 +5,9 @@ import {
   Text,
   // Button,
   Modal,
-  TextInput
+  TextInput,
 } from 'react-native';
+
 import {
   Button,
 } from 'react-native-elements';
@@ -42,25 +43,26 @@ export default class CardsView extends React.Component {
   updateCards = () => {
     Controller.getAllCardsForASet(this.cardSetId)
       .then(cards => {
-        alert(`updateCards ${JSON.stringify(cards)}`);
+        // alert(`updateCards ${JSON.stringify(cards)}`);
         this.setState({
-          cards
+          cards,
         });
       })
       .catch(err => console.error(err));
   };
 
-  createCard(name, description) {
+  createCard = (name, description) => {
     Controller.createCard(this.cardSetId, name, description)
       .then((card) => {
         this.setState(prevState => {
           return {
-            cards: prevState.cards.concat([card])
+            cards: prevState.cards.concat([card]),
+            modalVisible: false,
           }
         })
       })
       .catch(err => console.error(err))
-  }
+  };
 
   nextIndex = () => {
     this.setState(prevState => {
@@ -68,6 +70,7 @@ export default class CardsView extends React.Component {
       return {
         cardsIndex: index,
         showName: true,
+        modalVisible: false,
       }
     });
   };
@@ -78,11 +81,10 @@ export default class CardsView extends React.Component {
       index = this.state.cards.length - 1;
     }
     this.setState(prevState => {
-      // alert(`index ${prevState.cardsIndex}`);
-      // alert(`length ${prevState.cards.length}`);
       return {
         cardsIndex: index,
         showName: true,
+        modalVisible: false,
       }
     })
   };
@@ -91,6 +93,7 @@ export default class CardsView extends React.Component {
     this.setState(prevState => {
       return {
         showName: !prevState.showName,
+        modalVisible: false,
       }
     });
   };
@@ -99,10 +102,13 @@ export default class CardsView extends React.Component {
     let newCardView =
       <NewCardView
         onSubmit={this.createCard}
+        visible={this.state.modalVisible}
       />;
 
     return(
       <View style={{flex: 1}}>
+        {newCardView}
+
         <Button
           title={'flip'}
           style={styles.button}
@@ -113,9 +119,7 @@ export default class CardsView extends React.Component {
           style={styles.button}
           onPress={
             () => {
-              newCardView.toggleVisible();
-              // this.setState({modalVisible: true})
-              // this.createCard();
+              this.setState({modalVisible: true})
             }
           }
           />
@@ -148,18 +152,18 @@ export default class CardsView extends React.Component {
         }
 
         <Button
-          style={styles.button}
           title={'next'}
+          style={styles.button}
           onPress={this.nextIndex}
           />
         <Button
-          style={styles.button}
           title={'prev'}
+          style={styles.button}
           onPress={this.previousIndex}
           />
         <Button
-          style={styles.button}
           title={'modal'}
+          style={styles.button}
           onPress={() => this.setState({modalVisible: true})}
           />
       </View>

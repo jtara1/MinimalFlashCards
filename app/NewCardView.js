@@ -24,12 +24,17 @@ export default class NewCardView extends React.Component {
     this.cardDescription = 'undefined description';
   }
 
-  toggleVisible() {
+  toggleVisible = () => {
     this.setState(prevState => {
       return {
         visible: !prevState.visible,
       }
     });
+  };
+
+  componentWillReceiveProps(nextProps) {
+    // alert(`${JSON.stringify(nextProps)}`);
+    this.setState({ visible: nextProps.visible });
   }
 
   render() {
@@ -80,7 +85,7 @@ export default class NewCardView extends React.Component {
           title={'save'}
           onPress={
             () => {
-              alert(nameInput.value());
+              // alert(nameInput.value());
               this.props.onSubmit(this.cardName, this.cardDescription);
               this.setState({visible: false});
             }}
