@@ -8,6 +8,7 @@ import {
   AsyncStorage,
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
+import {List, ListItem} from 'react-native-elements';
 
 import Controller from './Controller';
 import CardSet from './CardSet';
@@ -29,6 +30,7 @@ export default class CardSetsView extends Component {
     Controller.getAllSets()
       .then(sets => {
         if (sets) {
+
           this.setState({
             cardSets: sets,
           })
@@ -48,10 +50,12 @@ export default class CardSetsView extends Component {
 
   render() {
     return(
-      <View>
-        <Example/>
+      <View
+        // style={{flex: 1}}
+      >
+        {/*<Example/>*/}
         <TouchableOpacity
-          style={styles.button}
+          // style={styles.button}
           onPress={
             () => {
               this.createCardSet();
@@ -60,19 +64,18 @@ export default class CardSetsView extends Component {
         >
           <Text>New</Text>
         </TouchableOpacity>
-
-        {
-            this.state.cardSets.map((cardSet) => {
-              return(
-                <TouchableOpacity
-                  key={cardSet.id}
-                  onPress={() => this.props.navigation.navigate('CardsView', {cardSetId: cardSet.id})}
-                >
-                  <Text style={styles.cardSet}>{cardSet.name}</Text>
-                </TouchableOpacity>
-              )
-            })
-        }
+        <List containerStyle={{marginBottom: 20}}>
+          {
+            this.state.cardSets.map((cardSet) => (
+              <ListItem
+                // avatar={{uri:l.avatar_url}}
+                key={cardSet.id}
+                title={cardSet.name}
+                onPress={() => this.props.navigation.navigate('CardsView', {cardSetId: cardSet.id})}
+              />
+            ))
+          }
+        </List>
       </View>
     );
   }
