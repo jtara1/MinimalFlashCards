@@ -1,4 +1,4 @@
-package com.minmalflashcards;
+package com.minimalflashcards;
 
 import android.app.Application;
 

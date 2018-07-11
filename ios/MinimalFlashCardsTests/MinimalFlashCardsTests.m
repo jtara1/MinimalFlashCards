@@ -14,11 +14,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React Native!"
 
-@interface MinmalFlashCardsTests : XCTestCase
+@interface MinimalFlashCardsTests : XCTestCase
 
 @end
 
-@implementation MinmalFlashCardsTests
+@implementation MinimalFlashCardsTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {
