@@ -1,14 +1,17 @@
 import React, {Component} from 'react';
 import {
   View,
-  Button,
   StyleSheet,
   Text,
   TouchableOpacity,
   AsyncStorage,
 } from 'react-native';
 import {StackNavigator} from 'react-navigation';
-import {List, ListItem} from 'react-native-elements';
+import {
+  List,
+  ListItem,
+  Button,
+} from 'react-native-elements';
 
 import Controller from './Controller';
 import CardSet from './CardSet';
@@ -26,7 +29,6 @@ export default class CardSetsView extends Component {
   }
 
   componentDidMount() {
-    // return;
     Controller.getAllSets()
       .then(sets => {
         if (sets) {
@@ -40,7 +42,10 @@ export default class CardSetsView extends Component {
   }
 
   createCardSet = () => {
-    let set = new CardSet((new Date()).toDateString());
+    // let set = new CardSet((new Date()).toDateString());
+    let name = `Card Set ${CardSet.setIds.length + 1}`;
+    let set = new CardSet(name);
+
     this.setState(prevState => {
       return {
         cardSets: prevState.cardSets.concat([set])
@@ -51,21 +56,18 @@ export default class CardSetsView extends Component {
   render() {
     return(
       <View>
-        {/*<Example/>*/}
-        <TouchableOpacity
-          onPress={
-            () => {
-              this.createCardSet();
-            }
-          }
-        >
-          <Text>New Card Set</Text>
-        </TouchableOpacity>
+        <Button
+          title={'Create a Card Set'}
+          raised
+          rightIcon={{name: 'add', color: 'green'}}
+          onPress={this.createCardSet}
+          backgroundColor={'rgb(255, 255, 255)'}
+          color={'green'}
+        />
         <List containerStyle={{marginBottom: 20}}>
           {
             this.state.cardSets.map((cardSet) => (
               <ListItem
-                // avatar={{uri:l.avatar_url}}
                 key={cardSet.id}
                 title={cardSet.name}
                 onPress={() => this.props.navigation.navigate('CardsView', {cardSetId: cardSet.id})}

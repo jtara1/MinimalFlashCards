@@ -6,15 +6,24 @@ import {
   // Button,
   Modal,
   TextInput,
+  Dimensions,
 } from 'react-native';
 
 import {
   Button,
+  Icon
 } from 'react-native-elements';
 
+import Orientation from 'react-native-orientation';
+
+// local imports
 import Controller from './Controller';
 import HorizontalRule from './HorizontalRule';
 import NewCardView from "./NewCardView";
+// const flipImage = require('./assets/return.png');
+// import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/EvilIcons';
+// import flipImage from './assets/return.png';
 
 export default class CardsView extends React.Component {
   constructor(props) {
@@ -27,6 +36,8 @@ export default class CardsView extends React.Component {
       cardDescription: 'default-description',
       showName: true, // show the name of the card instead of the description
       modalVisible: false,
+      screenWidth: Dimensions.get('window').width,
+      buttonBackgroundColor: 'rgb(60, 90, 224)',
     };
 
     this.cardSetId = this.props.navigation.getParam('cardSetId');
@@ -34,11 +45,22 @@ export default class CardsView extends React.Component {
 
   componentDidMount() {
     this.updateCards();
+    Orientation.addOrientationListener(this.orientationDidChange);
+
     // debug
     // this.createCard('run', 'to walk quickly');
     // this.createCard('prefix operator', 'an op that comes before the operand');
     // this.createCard('postfix operator', 'an op that comes after the operand');
   }
+
+  componentWillUnmount() {
+    Orientation.removeOrientationListener(this.orientationDidChange);
+  }
+
+  orientationDidChange = (orientation) => {
+    // update the width used for spacing between a few buttons
+    this.setState({screenWidth: Dimensions.get('window').width});
+  };
 
   updateCards = () => {
     Controller.getAllCardsForASet(this.cardSetId)
@@ -109,21 +131,40 @@ export default class CardsView extends React.Component {
       <View style={{flex: 1}}>
         {newCardView}
 
-        <Button
-          title={'flip'}
-          style={styles.button}
-          onPress={this.flipCurrentCard}
+        {/*top row view, includes flip and hamburger menu*/}
+        <View
+          style={{
+            flex: 1,
+            margin: 0,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            // borderWidth: 1,
+          }}
+        >
+          <Button
+            large
+            title={'flip'}
+            style={[
+              // styles.button,
+              {flex: 0.5},
+            ]}
+            rightIcon={{name: 'replay'}}
+            backgroundColor={this.state.buttonBackgroundColor}
+            onPress={this.flipCurrentCard}
           />
-        <Button
-          title={'new'}
-          style={styles.button}
-          onPress={
-            () => {
-              this.setState({modalVisible: true})
-            }
-          }
+          <Button
+            large
+            title={'options'}
+            style={[
+              // styles.button,
+              {flex: 0.5},
+            ]}
+            backgroundColor={this.state.buttonBackgroundColor}
+            rightIcon={{name: 'navicon', type: 'font-awesome'}}
           />
+        </View>
 
+        {/*the view of a single card (either it's name or description*/}
         {
           this.state.cards.length === 0 ?
             <Text style={styles.cardText}>no cards added yet</Text> :
@@ -151,21 +192,56 @@ export default class CardsView extends React.Component {
             </View>
         }
 
-        <Button
-          title={'next'}
-          style={styles.button}
-          onPress={this.nextIndex}
+        {/*the next and previous buttons*/}
+        <View
+          style={{
+            position: 'absolute',
+            top: 300,
+            height: 120,
+            padding: 0,
+            alignSelf: 'center',
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            width: this.state.screenWidth,
+            // borderWidth: 2,
+          }}
+        >
+          <Icon
+            raised
+            size={36}
+            name={'arrow-back'}
+            color={'rgba(0, 0, 0, 1)'}
+            underlayColor={this.state.buttonBackgroundColor}
+            containerStyle={{
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+            }}
+            onPress={this.previousIndex}
           />
-        <Button
-          title={'prev'}
-          style={styles.button}
-          onPress={this.previousIndex}
+          <Icon
+            raised
+            size={36}
+            name={'arrow-forward'}
+            color={'rgba(0, 0, 0, 1)'}
+            underlayColor={this.state.buttonBackgroundColor}
+            containerStyle={{
+              backgroundColor: 'rgba(0, 0, 0, 0)',
+            }}
+            onPress={this.nextIndex}
           />
-        <Button
-          title={'modal'}
-          style={styles.button}
+
+        </View>
+
+        <Icon
+          name={'add'}
+          raised
+          size={36}
+          color={'green'}
           onPress={() => this.setState({modalVisible: true})}
-          />
+          containerStyle={{
+            alignSelf: 'flex-end',
+          }}
+        />
       </View>
     )
   }
@@ -195,6 +271,7 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    flex: 3,
+    flex: 1,
+    backgroundColor: 'rgb(60, 90, 224)',
   }
 });
