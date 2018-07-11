@@ -152,16 +152,16 @@ export default class CardsView extends React.Component {
             backgroundColor={this.state.buttonBackgroundColor}
             onPress={this.flipCurrentCard}
           />
-          <Button
-            large
-            title={'options'}
-            style={[
-              // styles.button,
-              {flex: 0.5},
-            ]}
-            backgroundColor={this.state.buttonBackgroundColor}
-            rightIcon={{name: 'navicon', type: 'font-awesome'}}
-          />
+          {/*<Button*/}
+            {/*large*/}
+            {/*title={'options'}*/}
+            {/*style={[*/}
+              {/*// styles.button,*/}
+              {/*{flex: 0.5},*/}
+            {/*]}*/}
+            {/*backgroundColor={this.state.buttonBackgroundColor}*/}
+            {/*rightIcon={{name: 'navicon', type: 'font-awesome'}}*/}
+          {/*/>*/}
         </View>
 
         {/*the view of a single card (either it's name or description*/}
