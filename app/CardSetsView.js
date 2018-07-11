@@ -5,13 +5,18 @@ import {
   Text,
   TouchableOpacity,
   AsyncStorage,
+  Alert
 } from 'react-native';
+
 import {StackNavigator} from 'react-navigation';
+
 import {
   List,
   ListItem,
   Button,
 } from 'react-native-elements';
+
+const uuid = require('react-native-uuid');
 
 import Controller from './Controller';
 import CardSet from './CardSet';
@@ -29,6 +34,10 @@ export default class CardSetsView extends Component {
   }
 
   componentDidMount() {
+    this.updateSets();
+  }
+
+  updateSets = () => {
     Controller.getAllSets()
       .then(sets => {
         if (sets) {
@@ -39,7 +48,7 @@ export default class CardSetsView extends Component {
         }
       })
       .catch(err => console.error(err))
-  }
+  };
 
   createCardSet = () => {
     // let set = new CardSet((new Date()).toDateString());
@@ -48,30 +57,93 @@ export default class CardSetsView extends Component {
 
     this.setState(prevState => {
       return {
-        cardSets: prevState.cardSets.concat([set])
+        cardSets: prevState.cardSets.concat([set]),
       }
     });
   };
 
+  navigateToCardView = (set) => {
+    if (set.id == null) {
+      alert('Warning: there is no such such. Restart the app. Report as a bug if it persists.');
+    } else {
+      this.props.navigation.navigate('CardsView', {cardSetId: set.id});
+    }
+  };
+
   render() {
     return(
-      <View>
-        <Button
-          title={'Create a Card Set'}
-          raised
-          rightIcon={{name: 'add', color: 'green'}}
-          onPress={this.createCardSet}
-          backgroundColor={'rgb(255, 255, 255)'}
-          color={'green'}
-        />
-        <List containerStyle={{marginBottom: 20}}>
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
+        <View
+          style={{
+            flex: .15,
+            flexDirection: 'row',
+            // borderWidth: 1,
+          }}
+        >
+          <Button
+            title={'Create'}
+            raised
+            rightIcon={{name: 'add', color: 'green'}}
+            onPress={this.createCardSet}
+            backgroundColor={'rgb(255, 255, 255)'}
+            color={'green'}
+            containerViewStyle={{
+              flex: 1,
+            }}
+            buttonStyle={{
+              flex: 1,
+            }}
+          />
+          <Button
+            title={'Delete All'}
+            raised
+            rightIcon={{name: 'cancel', color: 'white'}}
+            onPress={() => {
+              Alert.alert(
+                'Deletion Confirmation',
+                'Are you sure wish to delete all card sets and cards?',
+                [
+                  {text: 'Cancel', onPress: () => {}},
+                  {text: 'Ok', onPress: () => {AsyncStorage.clear(); this.updateSets();}}
+                ]
+              );
+              this.setState(prevState => {
+                return {
+                  cardSets: [],
+                }
+              })
+            }}
+            backgroundColor={'red'}
+            color={'white'}
+            containerViewStyle={{
+              flex: 1,
+            }}
+            buttonStyle={{
+              flex: 1
+            }}
+          />
+        </View>
+        <List
+          containerStyle={{
+            marginBottom: 20,
+            flex: 1,
+          }}
+        >
           {
             this.state.cardSets.map((cardSet) => (
-              <ListItem
-                key={cardSet.id}
-                title={cardSet.name}
-                onPress={() => this.props.navigation.navigate('CardsView', {cardSetId: cardSet.id})}
-              />
+              cardSet.name ?
+                <ListItem
+                  key={cardSet.id}
+                  title={cardSet.name}
+                  onPress={() => this.navigateToCardView(cardSet)}
+                  component={TouchableOpacity}
+                />
+                :
+                <View key={uuid.v1()}></View>
             ))
           }
         </List>
