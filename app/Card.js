@@ -89,14 +89,42 @@ export default class Card extends CommonCard {
     }
 
     if (name == null && description == null) {
-      let msg = 'invalid card id given or name & description were never defined';
-      alert(msg)
+      // let msg = 'invalid card id given or name & description were never defined';
+      // alert(msg)
+      // console.warn(msg);
+      return;
     }
 
     return {
       id,
       name,
       description
+    }
+  }
+
+  static delete(id) {
+    id = Number(id);
+
+    try {
+      AsyncStorage.removeItem(`Card.this${id}.name`);
+      AsyncStorage.removeItem(`Card.this${id}.description`);
+    } catch (err) {
+      console.error(`Failed to remove name or description of a card.\n${err}`);
+    }
+
+    // remove the ids from the array
+    let idIndex = Card.cardIds.findIndex(element => element === id);
+    let ids = Card.cardIds.slice(0, idIndex);
+    ids.concat(Card.cardIds.slice(idIndex + 1, Card.cardIds.length));
+
+    // update the serialization for this
+    Card.cardIds = ids;
+    let str = Card.cardIds.join(',');
+
+    try {
+      AsyncStorage.setItem(`Card.ids`, str);
+    } catch (err) {
+      console.error(`Failed to update cardIds.\n${err}`);
     }
   }
 }

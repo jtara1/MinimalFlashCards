@@ -130,6 +130,63 @@ export default class CardSet extends CommonCard {
 
     return card;
   }
+
+  /**
+   * Delete a card by removing it from the set that it is in, and calling
+   * the delete static method for the card to delete it completely
+   * @param setId
+   * @param cardId
+   * @returns {Promise<void>}
+   */
+  static async deleteCard(setId, cardId) {
+    let cardIds;
+    try {
+      cardIds = await AsyncStorage.getItem(`CardSet.this${setId}.cardIds`);
+    } catch (err) {
+      console.error(`Failed to get card ids of a set.\n${err}`);
+    }
+
+    if (cardIds) {
+      // str -> array
+      cardIds = cardIds.split(',');
+
+      // remove the cardId that is being removed
+      let idIndex = cardIds.findIndex(element => element === cardId);
+      let ids = cardIds.slice(0, idIndex);
+      ids.concat(cardIds.slice(idIndex + 1, cardIds.length));
+
+      let str = cardIds.join(',');
+      AsyncStorage.setItem(`CardSet.this${setId}.cardIds`, str);
+
+      Card.delete(cardId);
+    }
+  }
+
+  static delete(id) {
+    id = Number(id);
+
+    try {
+      AsyncStorage.removeItem(`CardSet.this${id}.name`);
+      AsyncStorage.removeItem(`CardSet.this${id}.cardIds`);
+    } catch (err) {
+      console.error(`Failed to remove name or of a card set.\n${err}`);
+    }
+
+    // remove the ids from the array
+    let idIndex = CardSet.setIds.findIndex(element => element === id);
+    let ids = CardSet.setIds.slice(0, idIndex);
+    ids.concat(CardSet.setIds.slice(idIndex + 1, CardSet.setIds.length));
+
+    // update the serialization for this
+    CardSet.setIds = ids;
+    let str = CardSet.setIds.join(',');
+
+    try {
+      AsyncStorage.setItem(`CardSet.ids`, str);
+    } catch (err) {
+      console.error(`Failed to update setIds.\n${err}`);
+    }
+  }
 }
 
 (async function defineSetIds() {

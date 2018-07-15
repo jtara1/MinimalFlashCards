@@ -6,12 +6,14 @@ import {
   // Button,
   Modal,
   TextInput,
-  Dimensions,
+  Dimensions, TouchableOpacity,
 } from 'react-native';
 
 import {
   Button,
-  Icon
+  Icon,
+  List,
+  ListItem,
 } from 'react-native-elements';
 
 import Orientation from 'react-native-orientation';
@@ -19,7 +21,9 @@ import Orientation from 'react-native-orientation';
 // local imports
 import Controller from './Controller';
 import HorizontalRule from './HorizontalRule';
-import NewCardView from "./NewCardView";
+import NewCardModal from "./NewCardModal";
+
+const uuid = require('react-native-uuid');
 // const flipImage = require('./assets/return.png');
 // import Icon from 'react-native-vector-icons/FontAwesome';
 // import Icon from 'react-native-vector-icons/EvilIcons';
@@ -38,6 +42,7 @@ export default class CardsView extends React.Component {
       modalVisible: false,
       screenWidth: Dimensions.get('window').width,
       buttonBackgroundColor: 'rgb(60, 90, 224)',
+      optionsVisible: false,
     };
 
     this.cardSetId = this.props.navigation.getParam('cardSetId');
@@ -120,15 +125,45 @@ export default class CardsView extends React.Component {
     });
   };
 
+  toggleOptions = () => {
+    this.setState(
+      prevState => {
+        return {
+          optionsVisible: !prevState.optionsVisible,
+        };
+      }
+    );
+  };
+
+  deleteCurrentCard = () => {
+    alert('deleting');
+    let {cards, cardsIndex} = this.state;
+    try {
+      Controller.deleteCard(this.cardSetId, cards[cardsIndex].id)
+        .catch(err => console.error(err));
+    } catch (err) {
+      console.error(err);
+    }
+
+    this.setState({optionsVisible: false});
+    this.updateCards();
+  };
+
   render() {
     let newCardView =
-      <NewCardView
+      <NewCardModal
         onSubmit={this.createCard}
         visible={this.state.modalVisible}
       />;
 
     return(
-      <View style={{flex: 1}}>
+      <View style={
+        {
+          flex: 1,
+          margin: 0,
+          padding: 0,
+        }}
+      >
         {newCardView}
 
         {/*top row view, includes flip and hamburger menu*/}
@@ -136,6 +171,7 @@ export default class CardsView extends React.Component {
           style={{
             flex: 1,
             margin: 0,
+            padding: 0,
             flexDirection: 'row',
             justifyContent: 'space-between',
             // borderWidth: 1,
@@ -146,23 +182,57 @@ export default class CardsView extends React.Component {
             title={'flip'}
             style={[
               // styles.button,
-              {flex: 0.5},
+              {
+                flex: 1,
+                margin: 0,
+              },
             ]}
             rightIcon={{name: 'replay'}}
             backgroundColor={this.state.buttonBackgroundColor}
             onPress={this.flipCurrentCard}
           />
-          {/*<Button*/}
-            {/*large*/}
-            {/*title={'options'}*/}
-            {/*style={[*/}
-              {/*// styles.button,*/}
-              {/*{flex: 0.5},*/}
-            {/*]}*/}
-            {/*backgroundColor={this.state.buttonBackgroundColor}*/}
-            {/*rightIcon={{name: 'navicon', type: 'font-awesome'}}*/}
-          {/*/>*/}
+          {
+            this.state.cards.length !== 0 ?
+              <Button
+                large
+                title={'options'}
+                style={[
+                  {
+                    flex: 1,
+                    margin: 0,
+                  },
+                ]}
+                backgroundColor={this.state.buttonBackgroundColor}
+                rightIcon={{name: 'navicon', type: 'font-awesome'}}
+                onPress={this.toggleOptions}
+              /> :
+              <View></View>
+          }
+
         </View>
+          {
+            this.state.optionsVisible ?
+              <List
+                containerStyle={{
+                  flex: 1,
+                }}
+              >
+                <ListItem
+                  // key={cardSet.id}
+                  title={'Rename'}
+                  onPress={() => alert('d')}
+                  component={TouchableOpacity}
+                />
+                <ListItem
+                  // key={cardSet.id}
+                  title={'Delete'}
+                  onPress={this.deleteCurrentCard}
+                  component={TouchableOpacity}
+                />
+              </List>
+            :
+            <View key={uuid.v1()}></View>
+          }
 
         {/*the view of a single card (either it's name or description*/}
         {
@@ -185,8 +255,8 @@ export default class CardsView extends React.Component {
               >
                 {
                   this.state.showName ?
-                  this.state.cards[this.state.cardsIndex].name :
-                  this.state.cards[this.state.cardsIndex].description
+                    this.state.cards[this.state.cardsIndex].name :
+                    this.state.cards[this.state.cardsIndex].description
                 }
               </Text>
             </View>

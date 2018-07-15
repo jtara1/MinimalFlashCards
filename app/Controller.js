@@ -7,6 +7,10 @@ import {
 import CardSet from './CardSet';
 import Card from "./Card";
 
+/**
+ * Central controller for defining static methods for: get, create, delete
+ * of cards or card sets
+ */
 export default class Controller {
 
   static async getAllSets() {
@@ -46,7 +50,9 @@ export default class Controller {
     for (id of cardIds) {
       try {
         let card = await Card.get(id);
-        cards.push(card);
+        if (card) {
+          cards.push(card);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -57,5 +63,9 @@ export default class Controller {
 
   static async createCard(setId, name, description) {
     return CardSet.createCard(setId, name, description);
+  }
+
+  static async deleteCard(setId, cardId) {
+    return CardSet.deleteCard(setId, cardId);
   }
 }
