@@ -68,4 +68,8 @@ export default class Controller {
   static async deleteCard(setId, cardId) {
     return CardSet.deleteCard(setId, cardId);
   }
+
+  static async deleteCardSet(setId) {
+    return CardSet.delete(setId);
+  }
 }

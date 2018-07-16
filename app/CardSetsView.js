@@ -69,6 +69,43 @@ export default class CardSetsView extends Component {
     }
   };
 
+  showCardSetOptions = (setId, setName, cardCount) => {
+    Alert.alert(
+      'Options',
+      setName,
+      [
+        {text: 'Rename', onPress: () => alert('rename')},
+        {text: 'Delete', onPress:
+          () => {
+            Alert.alert(
+              '',
+              `Delete ${setName} and the ${cardCount} cards with it?`,
+              [
+                {text: 'Cancel', onPress: () => {}},
+                {text: 'Confirm', onPress:
+                  () => {
+                    Controller.deleteCardSet(setId).catch(err => console.error(err));
+                    this.removeCardSet(setId);
+                  }
+                },
+              ]
+            );
+          }},
+        {text: 'Cancel', onPress: () => console.log('OK Pressed')},
+      ],
+      { cancelable: true }
+    )
+  };
+
+  removeCardSet = (setId) => {
+    let { cardSets } = this.state;
+    let index = cardSets.findIndex(element => element.id === setId);
+    let sets = cardSets.slice(0, index);
+    sets.concat(cardSets.slice(index + 1, cardSets.length));
+
+    this.setState({cardSets: sets});
+  };
+
   render() {
     return(
       <View
@@ -114,7 +151,7 @@ export default class CardSetsView extends Component {
                 return {
                   cardSets: [],
                 }
-              })
+              });
             }}
             backgroundColor={'red'}
             color={'white'}
@@ -140,6 +177,10 @@ export default class CardSetsView extends Component {
                   title={cardSet.name}
                   onPress={() => this.navigateToCardView(cardSet)}
                   component={TouchableOpacity}
+                  onLongPress={
+                    () => this.showCardSetOptions(
+                      cardSet.id, cardSet.name, cardSet.cardIds.length)
+                  }
                 />
                 :
                 <View key={uuid.v1()}></View>

@@ -102,6 +102,14 @@ export default class Card extends CommonCard {
     }
   }
 
+  static setName(id, name) {
+
+  }
+
+  static setDescription(id, description) {
+
+  }
+
   static delete(id) {
     id = Number(id);
 
