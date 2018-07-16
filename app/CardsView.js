@@ -229,7 +229,8 @@ export default class CardsView extends React.Component {
                 backgroundColor={this.state.buttonBackgroundColor}
                 rightIcon={{name: 'navicon', type: 'font-awesome'}}
                 onPress={this.toggleOptions}
-              /> :
+              />
+              :
               <View></View>
           }
 
@@ -247,12 +248,10 @@ export default class CardsView extends React.Component {
                   }}
                 >
                   <ListItem
-                    // key={cardSet.id}
                     title={'Rename'}
-                    style={{flex: 2}}
+                    style={{flex: 1}}
                     onPress={() => this.renameCard()}
                     component={TouchableOpacity}
-                    // input={{placeholder: 'asaaaaaaaaaaaaaaaaaaaaa'}}
                     rightIcon={{name: 'font', type: 'font-awesome'}}
                     textStyle={{borderWidth: 3}}
                     textInput={true}
@@ -264,15 +263,14 @@ export default class CardsView extends React.Component {
                     textInputReturnKeyType={'done'}
                     textInputContainerStyle={{
                       flex: 2,
-                      zIndex: 3,
+                      zIndex: 2,
                     }}
                     textInputStyle={{
                       zIndex: 2,
                     }}
                   />
                   <ListItem
-                    // key={cardSet.id}
-                    style={{flex: 2}}
+                    style={{flex: 1}}
                     title={'Delete'}
                     rightIcon={{name: 'clear'}}
                     onPress={this.deleteCurrentCard}
