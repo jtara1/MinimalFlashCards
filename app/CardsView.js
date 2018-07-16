@@ -155,6 +155,10 @@ export default class CardsView extends React.Component {
     let {cards, cardsIndex, newCardNameOrDescription} = this.state;
     let card = cards[cardsIndex];
 
+    if (!newCardNameOrDescription) {
+      newCardNameOrDescription = 'undefined';
+    }
+
     if (this.state.showName) {
       Controller.setCardName(card.id, newCardNameOrDescription);
     } else {
@@ -245,9 +249,11 @@ export default class CardsView extends React.Component {
                   <ListItem
                     // key={cardSet.id}
                     title={'Rename'}
+                    style={{flex: 2}}
                     onPress={() => this.renameCard()}
                     component={TouchableOpacity}
                     // input={{placeholder: 'asaaaaaaaaaaaaaaaaaaaaa'}}
+                    rightIcon={{name: 'font', type: 'font-awesome'}}
                     textStyle={{borderWidth: 3}}
                     textInput={true}
                     textInputValue={this.state.newCardNameOrDescription}
@@ -256,10 +262,19 @@ export default class CardsView extends React.Component {
                         this.setState({newCardNameOrDescription})
                     }
                     textInputReturnKeyType={'done'}
+                    textInputContainerStyle={{
+                      flex: 2,
+                      zIndex: 3,
+                    }}
+                    textInputStyle={{
+                      zIndex: 2,
+                    }}
                   />
                   <ListItem
                     // key={cardSet.id}
+                    style={{flex: 2}}
                     title={'Delete'}
+                    rightIcon={{name: 'clear'}}
                     onPress={this.deleteCurrentCard}
                     component={TouchableOpacity}
                   />
@@ -289,7 +304,7 @@ export default class CardsView extends React.Component {
                 ]}
               >
                 {
-                  this.state.showName ?
+                  this.state.showName && this.state.cards ?
                     this.state.cards[this.state.cardsIndex].name :
                     this.state.cards[this.state.cardsIndex].description
                 }
