@@ -2,10 +2,12 @@ import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
-  Text,
+  // Text,
   TouchableOpacity,
   AsyncStorage,
-  Alert
+  Alert,
+  Modal,
+  TextInput,
 } from 'react-native';
 
 import {StackNavigator} from 'react-navigation';
@@ -14,6 +16,7 @@ import {
   List,
   ListItem,
   Button,
+  Text,
 } from 'react-native-elements';
 
 const uuid = require('react-native-uuid');
@@ -29,7 +32,12 @@ export default class CardSetsView extends Component {
 
     this.state = {
       cardSets: [],
+      modalVisible: false,
+      currentCardSet: null,
+      newCardSetName: '',
     };
+
+    // AsyncStorage.clear();
   }
 
   componentDidMount() {
@@ -91,7 +99,7 @@ export default class CardSetsView extends Component {
               ]
             );
           }},
-        {text: 'Cancel', onPress: () => console.log('OK Pressed')},
+        {text: 'Cancel', onPress: () => {}},
       ],
       { cancelable: true }
     )
@@ -144,14 +152,13 @@ export default class CardSetsView extends Component {
                 'Are you sure wish to delete all card sets and cards?',
                 [
                   {text: 'Cancel', onPress: () => {}},
-                  {text: 'Ok', onPress: () => {AsyncStorage.clear(); this.updateSets();}}
+                  {text: 'Ok', onPress:
+                    () => {
+                      AsyncStorage.clear();
+                      this.updateSets();}
+                  }
                 ]
               );
-              this.setState(prevState => {
-                return {
-                  cardSets: [],
-                }
-              });
             }}
             backgroundColor={'red'}
             color={'white'}
@@ -163,6 +170,74 @@ export default class CardSetsView extends Component {
             }}
           />
         </View>
+
+          <Modal
+            animationType="slide"
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              this.setState({modalVisible: false});
+            }}
+          >
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text
+              style={{fontSize: 30}}
+            >
+              {'Name: ' + (this.state.currentCardSet ? this.state.currentCardSet.name : '')}
+            </Text>
+
+            <Text
+              style={{fontSize: 24}}
+            >
+              {`Card Count: ${this.state.currentCardSet ? this.state.currentCardSet.cardIds.length : ''}`}
+            </Text>
+
+            <TextInput
+              style={{flex: 2}}
+              onChangeText={
+                text => {
+                  this.setState({newCardSetName: text});
+                }
+              }
+            />
+            <Button
+              title={'Rename'}
+              large
+              onPress={
+                () => {
+                  Controller.setCardSetName(
+                    this.state.currentCardSet.id, this.state.newCardSetName);
+                  this.setState({modalVisible: false});
+                  this.updateSets();
+                }
+              }
+            />
+            <Button
+              title={'Delete'}
+              onPress={
+                () => {
+                  Controller.deleteCardSet(this.state.currentCardSet.id).catch(err => console.error(err));
+                  this.setState({modalVisible: false});
+                  this.updateSets();
+                }
+              }
+            />
+            <Button
+              title={'Close'}
+              onPress={
+                () => {
+                  this.setState({modalVisible: false});
+                }
+              }
+            />
+          </View>
+        </Modal>
+
+
         <List
           containerStyle={{
             marginBottom: 20,
@@ -178,9 +253,16 @@ export default class CardSetsView extends Component {
                   onPress={() => this.navigateToCardView(cardSet)}
                   component={TouchableOpacity}
                   onLongPress={
-                    () => this.showCardSetOptions(
-                      cardSet.id, cardSet.name, cardSet.cardIds.length)
+                    () => {
+                      this.setState({
+                        currentCardSet: cardSet,
+                        modalVisible: true,
+                      });
+                      // this.showCardSetOptions(cardSet.id, cardSet.name, cardSet.cardIds.length)
+
+                    }
                   }
+
                 />
                 :
                 <View key={uuid.v1()}></View>

@@ -30,6 +30,11 @@ export default class CardSet extends CommonCard {
     try {
       name = await AsyncStorage.getItem(`CardSet.this${setId}.name`);
       cardIds = await AsyncStorage.getItem(`CardSet.this${setId}.cardIds`);
+      if (cardIds) {
+        cardIds = cardIds.split(',');
+      } else {
+        cardIds = [];
+      }
     } catch (err) {
       console.error(err);
     }
@@ -98,6 +103,11 @@ export default class CardSet extends CommonCard {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  static setName(setId, name) {
+    name = String(name);
+    AsyncStorage.setItem(`CardSet.this${setId}.name`, name);
   }
 
   /**
@@ -169,7 +179,6 @@ export default class CardSet extends CommonCard {
     let cardIds;
     try {
       cardIds = await AsyncStorage.getItem(`CardSet.this${id}.cardIds`);
-      cardIds = cardIds.split(',');
 
       AsyncStorage.removeItem(`CardSet.this${id}.name`);
       AsyncStorage.removeItem(`CardSet.this${id}.cardIds`);
@@ -194,6 +203,8 @@ export default class CardSet extends CommonCard {
 
     // delete each individual card created for this card set
     if (cardIds) {
+      cardIds = cardIds.split(',');
+
       for (let cardId of cardIds) {
         if (cardId) {
           Card.delete(cardId);
@@ -203,7 +214,6 @@ export default class CardSet extends CommonCard {
       // a card set with with no cards made for it might have been deleted or
       // console.warn('cardIds undef, can not delete each individual card for the set');
     }
-
   }
 }
 

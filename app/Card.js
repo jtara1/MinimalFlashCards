@@ -135,6 +135,7 @@ export default class Card extends CommonCard {
       console.error(`Failed to update cardIds.\n${err}`);
     }
   }
+
 }
 
 (async function defineCardIds() {
