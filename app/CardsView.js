@@ -6,7 +6,9 @@ import {
   // Button,
   Modal,
   TextInput,
-  Dimensions, TouchableOpacity,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView
 } from 'react-native';
 
 import {
@@ -43,6 +45,7 @@ export default class CardsView extends React.Component {
       screenWidth: Dimensions.get('window').width,
       buttonBackgroundColor: 'rgb(60, 90, 224)',
       optionsVisible: false,
+      newCardNameOrDescription: '',
     };
 
     this.cardSetId = this.props.navigation.getParam('cardSetId');
@@ -136,7 +139,6 @@ export default class CardsView extends React.Component {
   };
 
   deleteCurrentCard = () => {
-    alert('deleting');
     let {cards, cardsIndex} = this.state;
     try {
       Controller.deleteCard(this.cardSetId, cards[cardsIndex].id)
@@ -146,6 +148,24 @@ export default class CardsView extends React.Component {
     }
 
     this.setState({optionsVisible: false});
+    this.updateCards();
+  };
+
+  renameCard = () => {
+    let {cards, cardsIndex, newCardNameOrDescription} = this.state;
+    let card = cards[cardsIndex];
+
+    if (this.state.showName) {
+      Controller.setCardName(card.id, newCardNameOrDescription);
+    } else {
+      Controller.setCardDescription(card.id, newCardNameOrDescription);
+    }
+
+    this.setState({
+      newCardNameOrDescription: '',
+      showOptions: false,
+    });
+
     this.updateCards();
   };
 
@@ -212,24 +232,39 @@ export default class CardsView extends React.Component {
         </View>
           {
             this.state.optionsVisible ?
-              <List
-                containerStyle={{
-                  flex: 1,
+              <ScrollView
+                style={{
+                  flex: 1
                 }}
               >
-                <ListItem
-                  // key={cardSet.id}
-                  title={'Rename'}
-                  onPress={() => alert('d')}
-                  component={TouchableOpacity}
-                />
-                <ListItem
-                  // key={cardSet.id}
-                  title={'Delete'}
-                  onPress={this.deleteCurrentCard}
-                  component={TouchableOpacity}
-                />
-              </List>
+                <List
+                  containerStyle={{
+                    flex: 2,
+                  }}
+                >
+                  <ListItem
+                    // key={cardSet.id}
+                    title={'Rename'}
+                    onPress={() => this.renameCard()}
+                    component={TouchableOpacity}
+                    // input={{placeholder: 'asaaaaaaaaaaaaaaaaaaaaa'}}
+                    textStyle={{borderWidth: 3}}
+                    textInput={true}
+                    textInputValue={this.state.newCardNameOrDescription}
+                    textInputOnChangeText={
+                      (newCardNameOrDescription) =>
+                        this.setState({newCardNameOrDescription})
+                    }
+                    textInputReturnKeyType={'done'}
+                  />
+                  <ListItem
+                    // key={cardSet.id}
+                    title={'Delete'}
+                    onPress={this.deleteCurrentCard}
+                    component={TouchableOpacity}
+                  />
+                </List>
+              </ScrollView>
             :
             <View key={uuid.v1()}></View>
           }
@@ -308,6 +343,7 @@ export default class CardsView extends React.Component {
           size={36}
           color={'green'}
           onPress={() => this.setState({modalVisible: true})}
+          underlayColor={'rgba(255, 255, 255, 0.5)'}
           containerStyle={{
             alignSelf: 'flex-end',
           }}

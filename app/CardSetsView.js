@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   TextInput,
+  ScrollView,
 } from 'react-native';
 
 import {StackNavigator} from 'react-navigation';
@@ -75,34 +76,6 @@ export default class CardSetsView extends Component {
     } else {
       this.props.navigation.navigate('CardsView', {cardSetId: set.id});
     }
-  };
-
-  showCardSetOptions = (setId, setName, cardCount) => {
-    Alert.alert(
-      'Options',
-      setName,
-      [
-        {text: 'Rename', onPress: () => alert('rename')},
-        {text: 'Delete', onPress:
-          () => {
-            Alert.alert(
-              '',
-              `Delete ${setName} and the ${cardCount} cards with it?`,
-              [
-                {text: 'Cancel', onPress: () => {}},
-                {text: 'Confirm', onPress:
-                  () => {
-                    Controller.deleteCardSet(setId).catch(err => console.error(err));
-                    this.removeCardSet(setId);
-                  }
-                },
-              ]
-            );
-          }},
-        {text: 'Cancel', onPress: () => {}},
-      ],
-      { cancelable: true }
-    )
   };
 
   removeCardSet = (setId) => {
@@ -237,38 +210,39 @@ export default class CardSetsView extends Component {
           </View>
         </Modal>
 
+        <ScrollView>
+          <List
+            containerStyle={{
+              marginBottom: 20,
+              flex: 1,
+            }}
+          >
+            {
+              this.state.cardSets.map((cardSet) => (
+                cardSet.name ?
+                  <ListItem
+                    key={cardSet.id}
+                    title={cardSet.name}
+                    onPress={() => this.navigateToCardView(cardSet)}
+                    component={TouchableOpacity}
+                    onLongPress={
+                      () => {
+                        this.setState({
+                          currentCardSet: cardSet,
+                          modalVisible: true,
+                        });
+                        // this.showCardSetOptions(cardSet.id, cardSet.name, cardSet.cardIds.length)
 
-        <List
-          containerStyle={{
-            marginBottom: 20,
-            flex: 1,
-          }}
-        >
-          {
-            this.state.cardSets.map((cardSet) => (
-              cardSet.name ?
-                <ListItem
-                  key={cardSet.id}
-                  title={cardSet.name}
-                  onPress={() => this.navigateToCardView(cardSet)}
-                  component={TouchableOpacity}
-                  onLongPress={
-                    () => {
-                      this.setState({
-                        currentCardSet: cardSet,
-                        modalVisible: true,
-                      });
-                      // this.showCardSetOptions(cardSet.id, cardSet.name, cardSet.cardIds.length)
-
+                      }
                     }
-                  }
 
-                />
-                :
-                <View key={uuid.v1()}></View>
-            ))
-          }
-        </List>
+                  />
+                  :
+                  <View key={uuid.v1()}></View>
+              ))
+            }
+          </List>
+        </ScrollView>
       </View>
     );
   }

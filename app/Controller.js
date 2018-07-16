@@ -65,6 +65,14 @@ export default class Controller {
     return CardSet.setName(setId, name);
   }
 
+  static setCardName(cardId, name) {
+    return Card.setName(cardId, name);
+  }
+
+  static setCardDescription(cardId, description) {
+    return Card.setDescription(cardId, description);
+  }
+
   static async createCard(setId, name, description) {
     return CardSet.createCard(setId, name, description);
   }

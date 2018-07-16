@@ -103,11 +103,23 @@ export default class Card extends CommonCard {
   }
 
   static setName(id, name) {
+    id = Number(id);
 
+    try {
+      AsyncStorage.setItem(`Card.this${id}.name`, name);
+    } catch (err) {
+      console.error(`Failed rename card name, id = ${id}`);
+    }
   }
 
   static setDescription(id, description) {
+    id = Number(id);
 
+    try {
+      AsyncStorage.setItem(`Card.this${id}.description`, description);
+    } catch (err) {
+      console.error(`Failed rename card description, id = ${id}`);
+    }
   }
 
   static delete(id) {
