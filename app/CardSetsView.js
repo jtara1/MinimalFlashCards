@@ -190,15 +190,6 @@ export default class CardSetsView extends Component {
             >
               {'Name: ' + (this.state.currentCardSet ? this.state.currentCardSet.name : '')}
             </Text>
-
-            <Text
-              style={{fontSize: 24}}
-            >
-              {
-                `Card Count: ${this.state.currentCardSet ? this.state.currentCardSet.cardIds.length : ''}`
-              }
-            </Text>
-
             <TextInput
               style={{flex: 2}}
               multiline
