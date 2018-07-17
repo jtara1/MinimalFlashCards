@@ -43,6 +43,7 @@ export default class CardsView extends React.Component {
       showName: true, // show the name of the card instead of the description
       modalVisible: false,
       screenWidth: Dimensions.get('window').width,
+      screenHeight: Dimensions.get('window').height,
       buttonBackgroundColor: 'rgb(60, 90, 224)',
       optionsVisible: false,
       newCardNameOrDescription: '',
@@ -52,6 +53,7 @@ export default class CardsView extends React.Component {
   }
 
   componentDidMount() {
+    Orientation.lockToPortrait();
     this.updateCards();
     Orientation.addOrientationListener(this.orientationDidChange);
 
@@ -63,11 +65,16 @@ export default class CardsView extends React.Component {
 
   componentWillUnmount() {
     Orientation.removeOrientationListener(this.orientationDidChange);
+    Orientation.unlockAllOrientations();
   }
 
   orientationDidChange = (orientation) => {
     // update the width used for spacing between a few buttons
-    this.setState({screenWidth: Dimensions.get('window').width});
+    // alert('orient change');
+    this.setState({
+      screenWidth: Dimensions.get('window').width,
+      screenHeight: Dimensions.get('window').height
+    });
   };
 
   updateCards = () => {
@@ -314,7 +321,7 @@ export default class CardsView extends React.Component {
         <View
           style={{
             position: 'absolute',
-            top: 300,
+            top: this.state.screenHeight / 3,
             height: 120,
             padding: 0,
             alignSelf: 'center',
