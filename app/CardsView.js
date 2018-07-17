@@ -155,7 +155,16 @@ export default class CardsView extends React.Component {
     }
 
     this.setState({optionsVisible: false});
+    this.decrementCardIndex();
     this.updateCards();
+  };
+
+  decrementCardIndex = () => {
+    let {cards, cardsIndex} = this.state;
+    let index = cardsIndex - 1;
+    this.setState({
+      cardsIndex: index < 0 ? 0 : index,
+    });
   };
 
   renameCard = () => {
@@ -309,7 +318,7 @@ export default class CardsView extends React.Component {
                 ]}
               >
                 {
-                  this.state.showName && this.state.cards ?
+                  this.state.showName ?
                     this.state.cards[this.state.cardsIndex].name :
                     this.state.cards[this.state.cardsIndex].description
                 }

@@ -24,7 +24,7 @@ const uuid = require('react-native-uuid');
 
 import Controller from './Controller';
 import CardSet from './CardSet';
-import Example from './Test';
+// import Example from './Test';
 
 export default class CardSetsView extends Component {
 
