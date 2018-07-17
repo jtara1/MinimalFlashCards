@@ -144,16 +144,17 @@ export default class CardSetsView extends Component {
           />
         </View>
 
-          <Modal
-            animationType="slide"
-            visible={this.state.modalVisible}
-            onRequestClose={() => {
-              this.setState({modalVisible: false});
-            }}
-          >
+        <Modal
+          animationType="slide"
+          visible={this.state.modalVisible}
+          onRequestClose={() => {
+            this.setState({modalVisible: false});
+          }}
+        >
           <View
             style={{
               flex: 1,
+              flexDirection: 'column',
               justifyContent: 'space-between',
             }}
           >
@@ -171,6 +172,7 @@ export default class CardSetsView extends Component {
 
             <TextInput
               style={{flex: 2}}
+              multiline
               onChangeText={
                 text => {
                   this.setState({newCardSetName: text});
@@ -180,6 +182,8 @@ export default class CardSetsView extends Component {
             <Button
               title={'Rename'}
               large
+              backgroundColor={'rgb(60, 90, 224)'}
+              containerStyle={styles.button2}
               onPress={
                 () => {
                   Controller.setCardSetName(
@@ -191,16 +195,20 @@ export default class CardSetsView extends Component {
             />
             <Button
               title={'Delete'}
+              backgroundColor={'red'}
+              containerStyle={styles.button2}
               onPress={
                 () => {
                   Controller.deleteCardSet(this.state.currentCardSet.id).catch(err => console.error(err));
                   this.setState({modalVisible: false});
-                  this.updateSets();
+                  this.removeCardSet(this.state.currentCardSet.id);
                 }
               }
             />
             <Button
               title={'Close'}
+              large
+              containerStyle={styles.button2}
               onPress={
                 () => {
                   this.setState({modalVisible: false});
@@ -256,6 +264,10 @@ const styles = StyleSheet.create({
     height: 200,
     borderWidth: 1,
     padding: 40,
+  },
+
+  button2: {
+    paddingTop: 20,
   },
 
   cardSet: {
