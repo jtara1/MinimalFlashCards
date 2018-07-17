@@ -58,6 +58,21 @@ export default class CardSetsView extends Component {
       .catch(err => console.error(err))
   };
 
+  updateCurrentSet = () => {
+    if (!this.state.currentCardSet) {
+      console.warn('update current set called, but there is no current set');
+      return;
+    }
+
+    Controller.getCardSet(this.state.currentCardSet.id)
+      .then(cardSet => {
+        this.setState({
+          currentCardSet: cardSet,
+        })
+      })
+      .catch(err => console.error(err))
+  };
+
   createCardSet = () => {
     // let set = new CardSet((new Date()).toDateString());
     let name = `Card Set ${CardSet.setIds.length + 1}`;
@@ -86,6 +101,17 @@ export default class CardSetsView extends Component {
 
     this.setState({cardSets: sets});
   };
+
+  getCardCount() {
+    if (this.state.currentCardSet) {
+      Controller.getCard(this.state.currentCardSet.id)
+        .then(card => {
+          return Promise.resolve(card.cardIds.length);
+        })
+        .catch(Promise.reject);
+    }
+    return Promise.resolve('');
+  }
 
   render() {
     return(
@@ -147,6 +173,7 @@ export default class CardSetsView extends Component {
         <Modal
           animationType="slide"
           visible={this.state.modalVisible}
+          onShow={this.updateCurrentSet}
           onRequestClose={() => {
             this.setState({modalVisible: false});
           }}
@@ -167,7 +194,9 @@ export default class CardSetsView extends Component {
             <Text
               style={{fontSize: 24}}
             >
-              {`Card Count: ${this.state.currentCardSet ? this.state.currentCardSet.cardIds.length : ''}`}
+              {
+                `Card Count: ${this.state.currentCardSet ? this.state.currentCardSet.cardIds.length : ''}`
+              }
             </Text>
 
             <TextInput
