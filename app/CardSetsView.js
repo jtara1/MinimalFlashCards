@@ -231,6 +231,15 @@ export default class CardSetsView extends Component {
                   <ListItem
                     key={cardSet.id}
                     title={cardSet.name}
+                    rightIcon={{name: 'navicon', type: 'font-awesome'}}
+                    onPressRightIcon={
+                      () => {
+                        this.setState({
+                          currentCardSet: cardSet,
+                          modalVisible: true,
+                        });
+                      }
+                    }
                     onPress={() => this.navigateToCardView(cardSet)}
                     component={TouchableOpacity}
                     onLongPress={
