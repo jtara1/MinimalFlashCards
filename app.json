@@ -1,14 +1,14 @@
 {
   "expo": {
-   "name": "Kingdoms Game",
-   "version": "0.2.0",
-   "slug": "kingdoms-game-frontend",
+   "name": "Minimal Flash Cards",
+   "version": "1.0.1",
+   "slug": "minimal-flash-cards",
    "sdkVersion": "26.0.0",
    "ios": {
-     "bundleIdentifier": "cs480.kingdomsgame"
+     "bundleIdentifier": "io.jtara1.github.minimalflashcards"
    },
    "android": {
-     "package": "cs480.kingdomsgame"
+     "package": "io.jtara1.github.minimalflashcards"
    }
   }
 }
